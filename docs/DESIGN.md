@@ -218,6 +218,53 @@ alerts (id UUID PK, vehicle_id FK, pid_name TEXT, metric TEXT,
 - Cohort/cloud baselines (design hooks only)
 - DTC clear / write operations (read-only analytics)
 
+### Visual design (v0 — diagnostic terminal)
+
+**Aesthetic:** Scan-tool terminal — graphite surfaces, monospace data, green “OK” accent. Not marketing SaaS; a bench tool DIY mechanics trust with their logs.
+
+**Typography**
+
+| Role | Font | Usage |
+|------|------|--------|
+| Body | Inter | Lede, paragraphs, form labels |
+| Data / chrome | JetBrains Mono | Headings (`h1`/`h2`), table, inputs, buttons, status labels, metrics |
+
+**Color tokens** (defined in `frontend/src/index.css`)
+
+| Token | Dark (default) | Light | Usage |
+|-------|----------------|-------|--------|
+| `--bg` | `#0d1117` | `#f6f8fa` | Page background |
+| `--code-bg` | `#161b22` | `#eaeef2` | Panels |
+| `--text` / `--text-h` | `#8b949e` / `#e6edf3` | `#57606a` / `#1f2328` | Muted / primary text |
+| `--accent` / `--ok` | `#3fb950` | `#1a7f37` | Primary actions, OK states, progress |
+| `--warn` | `#d29922` | `#9a6700` | Alerts, degraded LLM |
+| `--danger` | `#f85149` | `#cf222e` | Errors, high urgency |
+| `--border` | `#30363d` | `#d0d7de` | Panel borders |
+
+**Layout & IA (single-page v0)**
+
+```
+Hero (SCAN / TREND)
+→ Onboarding strip (until first import)
+→ Vehicle (nickname + sessions; UUID in Advanced disclosure)
+→ Baseline progress (+ metric checklist while cold-starting)
+→ Import CSV
+→ Insights (alerts + trend baselines table)
+→ BYOM narrative (secondary)
+```
+
+**Interaction patterns**
+
+- Cold-start: honest copy + drive counter; celebration banner when baseline gate opens.
+- Import: async stages with `aria-live="polite"` status region.
+- Focus: `:focus-visible` ring using `--accent`.
+
+**Deferred (v0.1+)**
+
+- Dedicated mobile layout / sidecar PWA
+- Icon system
+- Light-mode as primary (currently follows `prefers-color-scheme`)
+
 ## Open Questions
 
 1. **Project name / repo:** `garage-brain`, `obd-predict`, or user preference?
@@ -228,12 +275,12 @@ alerts (id UUID PK, vehicle_id FK, pid_name TEXT, metric TEXT,
 
 ## Success Criteria
 
-- [ ] Import a real Car Scanner CSV #2 from a 20+ minute drive without manual column mapping
-- [ ] Store ≥5 sessions per vehicle and show baseline progress UI
-- [ ] Golden fixture: inject +15% LTFT drift over 6 synthetic sessions → STFT/LTFT alert after baseline gate
-- [ ] Generate BYOM report from local Ollama with no cloud dependency
-- [ ] README: Car Scanner export → analyze in <5 minutes for a new user
-- [ ] Apache-2.0, GitHub Actions runs parser + trend unit tests
+- [x] Import a real Car Scanner CSV #2 from a 20+ minute drive without manual column mapping
+- [x] Store ≥5 sessions per vehicle and show baseline progress UI
+- [x] Golden fixture: inject +15% LTFT drift over 6 synthetic sessions → STFT/LTFT alert after baseline gate
+- [x] Generate BYOM report from local Ollama with no cloud dependency
+- [x] README: Car Scanner export → analyze in <5 minutes for a new user
+- [x] Apache-2.0, GitHub Actions runs parser + trend unit tests
 
 ## Roadmap
 
@@ -358,53 +405,52 @@ Launch A+B in parallel worktrees after repo scaffold; then C; then D.
 
 Synthesized from this review's findings. Each task derives from a specific finding above.
 
-- [ ] **T1 (P1, human: ~4h / CC: ~30min)** — parser — Scaffold Java Car Scanner CSV #2 parser with 3 real fixtures
+- [x] **T1 (P1, human: ~4h / CC: ~30min)** — parser — Scaffold Java Car Scanner CSV #2 parser with 3 real fixtures
   - Surfaced by: Architecture #1 — fixtures-first TDD
   - Files: `backend/.../CarScannerCsvParser.java`, `backend/src/test/resources/fixtures/`
   - Verify: `./mvnw test -Dtest=CarScannerCsvParserTest`
 
-- [ ] **T2 (P1, human: ~6h / CC: ~45min)** — ingestion — Parquet staging + transactional Postgres import
+- [x] **T2 (P1, human: ~6h / CC: ~45min)** — ingestion — Parquet staging + transactional Postgres import
   - Surfaced by: Architecture #5/7 — Spring + Parquet + Postgres
   - Files: `ImportService.java`, Flyway migrations
   - Verify: Testcontainers `ImportServiceIT`
 
-- [ ] **T3 (P1, human: ~3h / CC: ~20min)** — analytics — Rule-based trip segmenter
+- [x] **T3 (P1, human: ~3h / CC: ~20min)** — analytics — Rule-based trip segmenter
   - Surfaced by: Architecture #3
   - Files: `TripSegmenter.java`
   - Verify: unit tests per segment type + no-speed fallback
 
-- [ ] **T4 (P1, human: ~6h / CC: ~40min)** — analytics — Materialized baselines + 4 metrics + alert gate
+- [x] **T4 (P1, human: ~6h / CC: ~40min)** — analytics — Materialized baselines + 4 metrics + alert gate
   - Surfaced by: Architecture #4
   - Files: `backend/.../analytics/`
   - Verify: golden 6-session LTFT drift → alert
 
-- [ ] **T5 (P1, human: ~3h / CC: ~25min)** — api — Async import job + polling
+- [x] **T5 (P1, human: ~3h / CC: ~25min)** — api — Async import job + polling
   - Surfaced by: Performance #1
   - Files: `ImportController.java`, `import_jobs` table
   - Verify: upload large fixture without timeout
 
-- [ ] **T6 (P1, human: ~4h / CC: ~30min)** — frontend — React upload + trends UI
+- [x] **T6 (P1, human: ~4h / CC: ~30min)** — frontend — React upload + trends UI
   - Surfaced by: Architecture #6
   - Files: `frontend/src/`
   - Verify: manual E2E against local docker-compose
 
-- [ ] **T7 (P2, human: ~2h / CC: ~15min)** — llm — Ollama structured JSON client
+- [x] **T7 (P2, human: ~2h / CC: ~15min)** — llm — Ollama structured JSON client
   - Surfaced by: Architecture #8
-  - Files: `OllamaClient.java`
-  - Verify: WireMock schema validation test
+  - Files: `OllamaClient.java`, `VehicleReportService.java`, `VehicleReportController.java`, `frontend/src/App.tsx`
+  - Verify: MockRest schema validation + retry tests; UI degraded banner
 
-- [ ] **T8 (P2, human: ~3h / CC: ~20min)** — test — Testcontainers + golden drift fixture
+- [x] **T8 (P2, human: ~3h / CC: ~20min)** — test — Testcontainers + golden drift fixture
   - Surfaced by: Test #1/#2
-  - Files: `backend/src/test/java/`
-  - Verify: CI green on GitHub Actions
+  - Files: `GoldenDriftIntegrationTest.java`, `PostgresIntegrationTest.java`, `.github/workflows/ci.yml`
+  - Verify: CI green on GitHub Actions; `GoldenDriftIntegrationTest` via REST API
 
-- [ ] **T9 (P2, human: ~2h / CC: ~15min)** — ops — docker-compose + README quickstart
+- [x] **T9 (P2, human: ~2h / CC: ~15min)** — ops — docker-compose + README quickstart
   - Surfaced by: Distribution check
-  - Files: `docker-compose.yml`, `README.md`
-  - Verify: new user path <5 minutes
+  - Files: `docker-compose.yml`, `README.md`, `.env.example`, `.github/workflows/ci.yml`
+  - Verify: new user path <5 minutes; compose healthcheck; frontend CI build/lint
 
-**Tasks JSONL:** `~/.gstack/projects/antonrieznikov/tasks-eng-review-20260615-134913.jsonl`  
-**Test plan:** `~/.gstack/projects/antonrieznikov/antonrieznikov-greenfield-eng-review-test-plan-20260615-134913.md`
+**Eng-review artifacts:** gstack task JSONL and test-plan markdown from the 2026-06-15 review (local machine only — not checked into this repo).
 
 ## TODOS.md (deferred work)
 
@@ -445,7 +491,7 @@ Synthesized from this review's findings. Each task derives from a specific findi
 |--------|--------|
 | Office hours / CEO | APPROVED design |
 | Eng (PLAN) | COMPLETE — issues_open (2 critical gaps, 3 open questions) |
-| Design | Not run |
+| Design | Complete v0 pass 2026-06-15 — journey, diagnostic UI, IA, a11y; tokens documented below |
 | Outside voice | Skipped |
 
 **Ready to implement:** Yes — start T1 parser + fixtures after repo creation.  

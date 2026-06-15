@@ -1,16 +1,24 @@
 package com.garagebrain.ingestion;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
 class PidCanonicalMapTest {
 
     @Test
-    void loadsEngineRpmAlias() throws Exception {
+    void loadsEngineRpmAlias() {
         PidCanonicalMap map = new PidCanonicalMap();
         assertEquals("engine_rpm", map.canonicalName("Engine RPM"));
-        assertNotNull(map.canonicalName("Time"));
+        assertEquals("time", map.canonicalName("Time"));
+    }
+
+    @Test
+    void normalizesCarScannerHeadersWithUnits() {
+        PidCanonicalMap map = new PidCanonicalMap();
+        assertEquals("engine_rpm", map.canonicalName("Engine RPM (rpm)"));
+        assertEquals("coolant_temp", map.canonicalName("Engine coolant temperature (℃)"));
+        assertEquals("battery_voltage", map.canonicalName("OBD Module Voltage (V)"));
+        assertEquals("vehicle_speed", map.canonicalName("Vehicle speed (km/h)"));
     }
 }

@@ -3,7 +3,11 @@
 .idea/
 *.iml
 .env
+.env.local
 .env.*
+!.env.example
+*.pem
+*.key
 
 # Backend
 backend/target/

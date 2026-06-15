@@ -6,9 +6,16 @@ services:
       POSTGRES_USER: garagebrain
       POSTGRES_PASSWORD: garagebrain
     ports:
-      - "5432:5432"
+      # Set DB_PORT=5433 in .env if 5432 is already in use on your machine
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - garagebrain_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U garagebrain -d garagebrain"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
 volumes:
   garagebrain_pg:
