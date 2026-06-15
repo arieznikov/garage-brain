@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --text: #8b949e;
+  --text-h: #e6edf3;
+  --bg: #0d1117;
+  --border: #30363d;
+  --code-bg: #161b22;
+  --accent: #3fb950;
+  --accent-bg: rgba(63, 185, 80, 0.1);
+  --accent-border: rgba(63, 185, 80, 0.45);
+  --ok: #3fb950;
+  --ok-bg: rgba(63, 185, 80, 0.12);
+  --ok-border: rgba(63, 185, 80, 0.55);
+  --warn: #d29922;
+  --warn-bg: rgba(210, 153, 34, 0.12);
+  --warn-border: rgba(210, 153, 34, 0.45);
+  --danger: #f85149;
+  --danger-bg: rgba(248, 81, 73, 0.1);
+  --danger-border: rgba(248, 81, 73, 0.45);
+  --shadow: none;
+
+  --sans: 'Inter', system-ui, 'Segoe UI', sans-serif;
+  --heading: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+  --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+
+  font: 16px/150% var(--sans);
+  letter-spacing: 0.01em;
+  color-scheme: dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --text: #57606a;
+    --text-h: #1f2328;
+    --bg: #f6f8fa;
+    --border: #d0d7de;
+    --code-bg: #eaeef2;
+    --accent: #1a7f37;
+    --accent-bg: rgba(26, 127, 55, 0.08);
+    --accent-border: rgba(26, 127, 55, 0.35);
+    --ok: #1a7f37;
+    --ok-bg: rgba(26, 127, 55, 0.1);
+    --ok-border: rgba(26, 127, 55, 0.4);
+    --warn: #9a6700;
+    --warn-bg: rgba(154, 103, 0, 0.1);
+    --warn-border: rgba(154, 103, 0, 0.35);
+    --danger: #cf222e;
+    --danger-bg: rgba(207, 34, 46, 0.08);
+    --danger-border: rgba(207, 34, 46, 0.35);
+    color-scheme: light;
+  }
+}
+
+#root {
+  width: min(960px, 100%);
+  max-width: 100%;
+  margin: 0 auto;
+  text-align: left;
+  border-inline: 1px solid var(--border);
+  min-height: 100svh;
+  box-sizing: border-box;
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+}
+
+h1,
+h2 {
+  font-family: var(--heading);
+  font-weight: 500;
+  color: var(--text-h);
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  margin: 0.5rem 0;
+}
+
+h2 {
+  font-size: 1rem;
+  line-height: 1.3;
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+
+p {
+  margin: 0;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.85em;
+  line-height: 135%;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  color: var(--text-h);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+button:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+summary:focus:not(:focus-visible) {
+  outline: none;
+}

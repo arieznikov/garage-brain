@@ -1,0 +1,7 @@
+# Local dev with LM Studio — load google/gemma-4-e2b (or your model) and start the local server.
+garagebrain:
+  llm:
+    provider: openai-compatible
+    base-url: http://localhost:1234
+    model: google/gemma-4-e2b
+    api-key: lm-studio

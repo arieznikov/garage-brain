@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: garage-brain-api
+  config:
+    import:
+      # Repo-root .env when running from backend/ (./mvnw spring-boot:run)
+      - optional:file:../.env[.properties]
+      # .env next to cwd (IDE runs from repo root, or backend/.env)
+      - optional:file:.env[.properties]
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:garagebrain}
+    username: ${DB_USER:garagebrain}
+    password: ${DB_PASSWORD:garagebrain}
+  flyway:
+    enabled: true
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+garagebrain:
+  data-dir: ${GARAGEBRAIN_DATA_DIR:${user.home}/.garage-brain}
+  llm:
+    provider: ${LLM_PROVIDER:ollama}
+    base-url: ${LLM_BASE_URL:${OLLAMA_BASE_URL:http://localhost:11434}}
+    model: ${LLM_MODEL:${OLLAMA_MODEL:llama3.2}}
+    api-key: ${LLM_API_KEY:}
+
+server:
+  port: ${PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  show-actuator: true

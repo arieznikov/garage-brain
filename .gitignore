@@ -1,0 +1,22 @@
+# Root
+.DS_Store
+.idea/
+*.iml
+.env
+.env.local
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Backend
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Data
+.parquet/
+data/
