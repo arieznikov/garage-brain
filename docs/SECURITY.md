@@ -7,8 +7,8 @@ Garage Brain is **local-first**: your drives stay on your machine unless you cho
 | File | Safe to commit? |
 |------|-----------------|
 | `.env.example` | Yes — placeholders only |
-| `.env` | **No** — gitignored; copy from `.env.example` |
-| `~/.garage-brain/` | **No** — runtime data (Parquet, imports); outside the repo |
+| `.env` | **No** — gitignored. Copy from `.env.example`. |
+| `~/.garage-brain/` | **No** — runtime data (Parquet, imports). Outside the repository. |
 
 Before pushing to GitHub:
 
@@ -26,7 +26,7 @@ BYOM report generation sends **structured JSON only** (vehicle label, baseline p
 
 ## Test fixtures
 
-Parser fixtures under `backend/src/test/resources/fixtures/` are derived from real Car Scanner exports. **GPS coordinates are replaced with synthetic values** (`45.0, -93.0`) before publication. OBD readings may still look like a real vehicle; do not add new fixtures with identifiable routes or VINs without redacting.
+Real Car Scanner exports produce the parser fixtures under `backend/src/test/resources/fixtures/`. **We replaced GPS coordinates with synthetic values** (`45.0, -93.0`) before publication. OBD readings can still resemble a real vehicle. Do not add new fixtures with identifiable routes or VINs without redaction.
 
 To re-scrub GPS after adding fixtures:
 

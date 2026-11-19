@@ -8,21 +8,21 @@ Mode: Builder
 
 ## Problem Statement
 
-DIY home mechanics already use apps like Car Scanner or AndrOBD with ELM327 adapters to read codes and log PID data. Those tools are strong at **capture** but weak at **foresight**: users export CSV files (or leave logs buried in the app) and only act after a check-engine light or failed smog test.
+DIY home mechanics already use apps like Car Scanner or AndrOBD with ELM327 adapters to read codes and log PID data. Those tools are strong at **capture** but weak at **foresight**. Users export CSV files or leave logs in the app. They only act after a check-engine light or a failed smog test.
 
-The user wants an **open-source, free, BYOM (bring your own model)** layer that extends this ecosystem — especially Car Scanner — with **predictive maintenance**: spotting sensor drift and emerging faults before the ECU sets a code.
+The user wants an **open-source, free, BYOM (bring your own model)** layer for this ecosystem, especially Car Scanner. This layer provides **predictive maintenance**. It detects sensor drift and emerging faults before the ECU sets a code.
 
 ## What Makes This Cool
 
 - **Time-series brain on data users already log** — intelligence without rebuilding a full scanner UI.
 - **Predictive alerts** with honest cold-start UX ("building baseline, 4/6 drives").
-- **BYOM** — OpenAI, Anthropic, Ollama, or any OpenAI-compatible endpoint; no bundled paid AI.
+- **BYOM** — OpenAI, Anthropic, Ollama, or any OpenAI-compatible endpoint. No bundled paid AI.
 - **10x north star:** open hardware reference dongle + firmware to tame ELM327 clone chaos (future, not v0).
 
 ## Constraints
 
-- Must work with **popular OBD2 devices** indirectly in v0 (via exported logs); direct ELM327 in v1+.
-- **Open source** and **free to use**; AI costs borne by user via their own API keys / local models.
+- Must work with **popular OBD2 devices** indirectly in v0 (via exported logs). Direct ELM327 support follows in v1+.
+- **Open source** and **free to use**. The user pays AI costs via their own API keys or local models.
 - Extend **Car Scanner** workflow (CSV export) rather than compete on day one.
 - Predictive value requires **multiple drives** — v0 must not over-promise on first import.
 
@@ -39,8 +39,8 @@ Independent advisor (cold read, no Codex — Claude subagent):
 
 - **Coolest unconsidered:** cohort anomaly engine — compare your car to anonymized same make/model/mileage baselines to help cold start.
 - **Core insight quoted:** "Time-series brain on data users already log, not rebuilding Car Scanner UI."
-- **50% there:** SavvyCAN + AndrOBD for capture/export patterns; build CSV pipeline, baselines, BYOM summaries, cold-start UX.
-- **Weekend stack:** Python + DuckDB + FastAPI or Streamlit + Ollama; 5–8 trend metrics; skip BLE/mobile/hardware.
+- **50% there:** SavvyCAN and AndrOBD for capture and export patterns. Build CSV pipeline, baselines, BYOM summaries, and cold-start UX.
+- **Weekend stack:** Python, DuckDB, FastAPI or Streamlit, and Ollama. Track 5–8 trend metrics. Skip BLE, mobile, and hardware.
 
 **Synthesis:** Adopt SavvyCAN/AndrOBD as reference, not competitors. Sequence hub core → mobile sidecar → protocol adapters → open hardware.
 
@@ -51,27 +51,27 @@ Independent advisor (cold read, no Codex — Claude subagent):
 - **Summary:** Import Car Scanner + AndrOBD CSV → DuckDB/SQLite → rule-based trends → BYOM narrative report.
 - **Effort:** S (human ~1 week / CC ~2–3 days)
 - **Risk:** Low
-- **Pros:** Fastest proof of predictive value; no BLE; BYOM on structured summaries
-- **Cons:** Manual export step; less "live" than Car Scanner
+- **Pros:** Fastest proof of predictive value. No BLE. BYOM on structured summaries.
+- **Cons:** Manual export step. Less "live" than Car Scanner.
 - **Reuses:** Car Scanner CSV format, AndrOBD export, SavvyCAN log-analysis concepts
 
 ### Approach B: Universal OBD hub — core library + shells
 
 - **Summary:** Shared `obd-core` (ELM327, PID decode, record) + Flutter/Tauri UI + AI plugins.
 - **Effort:** L | **Risk:** Med
-- **Pros:** Long-term vision match; live + import unified
-- **Cons:** Dongle compatibility tar pit; months before predictive shines
+- **Pros:** Long-term vision match. Live and import unified.
+- **Cons:** Dongle compatibility issues. Predictive value takes months to appear.
 
 ### Approach C: Car Scanner sidecar — share-sheet companion
 
 - **Summary:** Mobile/PWA: Share CSV from Car Scanner → analyze → push notifications for trends.
 - **Effort:** M | **Risk:** Med
-- **Pros:** Glove-box workflow; feels like extending Car Scanner
-- **Cons:** iOS friction; format coupling
+- **Pros:** Glove-box workflow. Feels like extending Car Scanner.
+- **Cons:** iOS friction. Format coupling.
 
 ## Recommended Approach
 
-**Approach A (Garage Brain)** for v0, with a documented path to C (mobile sidecar) and B (live dongle adapters) once the predictive engine is validated.
+We select **Approach A (Garage Brain)** for v0. We provide a documented path to C (mobile sidecar) and B (live dongle adapters) after tests check the predictive engine.
 
 ### v0 scope (strict)
 
@@ -84,7 +84,7 @@ Independent advisor (cold read, no Codex — Claude subagent):
 | 4 core trend metrics | Misfire slope (optional PID) |
 | GitHub repo + README + CI tests | PyPI, Docker, ghcr.io (v0.1) |
 
-**v0 language:** "trend anomalies" and "early warnings" — reserve "predictive maintenance" for post-baseline validated alerts.
+**v0 language:** "trend anomalies" and "early warnings" — reserve "predictive maintenance" for post-baseline checked alerts.
 
 ### v0 architecture (post eng review — Java/Spring pivot)
 
@@ -161,7 +161,7 @@ alerts (id UUID PK, vehicle_id FK, pid_name TEXT, metric TEXT,
 | Battery at crank | Battery voltage | First 30s | Min voltage < baseline − 2σ |
 | Idle RPM variance | Engine RPM | Idle segments (speed=0) | Variance > 2.5σ |
 
-**Defaults:** minimum **5 sessions** per vehicle before alerts; rolling window **10 sessions**; z threshold **2.5**; missing PID → skip metric, show "not available in this export."
+**Defaults:** minimum **5 sessions** per vehicle before alerts. Rolling window **10 sessions**. Z threshold **2.5**. If a PID is missing, skip the metric and show "not available in this export."
 
 **Extension point (v1+):** `BaselineProvider` interface — `PersonalBaseline` (v0), `CohortBaseline` (future, opt-in anonymized upload).
 
@@ -170,7 +170,7 @@ alerts (id UUID PK, vehicle_id FK, pid_name TEXT, metric TEXT,
 - **Input to LLM:** structured JSON only (vehicle meta, active alerts, severity) — never raw CSV.
 - **Default:** Ollama local (`http://localhost:11434`) — no data leaves machine.
 - **Output schema:** `{ summary, urgency, likely_causes[], suggested_checks[], drive_advice }`
-- **Validation:** JSON schema check; retry once on parse failure.
+- **Validation:** JSON schema check. Retry once on parse failure.
 - **v0.1 cloud providers:** explicit opt-in + "data sent" summary before first cloud call.
 
 **Example LLM input:**
@@ -186,28 +186,28 @@ alerts (id UUID PK, vehicle_id FK, pid_name TEXT, metric TEXT,
 
 ### Privacy & security
 
-- All processing local by default; DuckDB file on disk in user home or project data dir.
+- All processing stays local by default. DuckDB file on disk in user home or project data directory.
 - Redact GPS coordinates from Car Scanner exports if present (store lat/lon optional, off by default).
-- API keys via environment variables only; never committed.
-- **Clean-room parsers** — no AndrOBD GPL code reuse; study export formats only.
+- Provide API keys through environment variables only. Never commit API keys.
+- **Clean-room parsers** — no AndrOBD GPL code reuse. Study export formats only.
 
 ### Tech stack (v0 — updated by /plan-eng-review)
 
 | Layer | Choice | Rationale |
 |-------|--------|-----------|
-| Backend | Java 21 + Spring Boot 3 | User pivot; REST API, transactions, Testcontainers CI |
-| Raw samples | Parquet files on disk | Archive + replay; keeps Postgres lean |
+| Backend | Java 21 + Spring Boot 3 | User pivot. REST API, transactions, Testcontainers CI |
+| Raw samples | Parquet files on disk | Archive and replay. Keeps Postgres lean |
 | Structured data | PostgreSQL 16 | Sessions, aggregates, baselines, alerts, import jobs |
 | Frontend | React + Vite | Thin client for upload, trends, BYOM panel |
-| LLM | Ollama HTTP (local) | Structured JSON in only; JSON schema validation |
-| Dev/prod | Docker Compose | Postgres + app; GitHub Actions with Testcontainers |
-| License | Apache-2.0 | Max adoption; clean-room parsers (no AndrOBD GPL code) |
+| LLM | Ollama HTTP (local) | Structured JSON input only. JSON schema validation |
+| Dev/prod | Docker Compose | Postgres and app. GitHub Actions with Testcontainers |
+| License | Apache-2.0 | Maximum adoption. Clean-room parsers (no AndrOBD GPL code) |
 
-**Superseded (office hours draft):** Python + DuckDB + Streamlit + `uv` — deferred; see NOT in scope.
+**Superseded (office hours draft):** Python + DuckDB + Streamlit + `uv` — deferred. See NOT in scope.
 
 ### Parser scope v0
 
-1. **Car Scanner CSV #2** — primary; collect 3–5 anonymized community samples as test fixtures.
+1. **Car Scanner CSV #2** — primary. Collect 3–5 anonymized community samples as test fixtures.
 2. **Unsupported variant** — clear error: "Export as CSV #2 from Car Scanner → Data recording → Share."
 
 ### Out of scope v0
@@ -220,7 +220,7 @@ alerts (id UUID PK, vehicle_id FK, pid_name TEXT, metric TEXT,
 
 ### Visual design (v0 — diagnostic terminal)
 
-**Aesthetic:** Scan-tool terminal — graphite surfaces, monospace data, green “OK” accent. Not marketing SaaS; a bench tool DIY mechanics trust with their logs.
+**Aesthetic:** Scan-tool terminal — graphite surfaces, monospace data, green “OK” accent. Not marketing SaaS. It is a bench tool DIY mechanics trust with their logs.
 
 **Typography**
 
@@ -255,7 +255,7 @@ Hero (SCAN / TREND)
 
 **Interaction patterns**
 
-- Cold-start: honest copy + drive counter; celebration banner when baseline gate opens.
+- Cold-start: honest copy and drive counter. Celebration banner when baseline gate opens.
 - Import: async stages with `aria-live="polite"` status region.
 - Focus: `:focus-visible` ring using `--accent`.
 
@@ -291,7 +291,7 @@ Hero (SCAN / TREND)
 | **v0.1** | OpenAI-compatible BYOM, Docker image, cloud deploy docs |
 | **v0.2** | AndrOBD CSV adapter, mobile sidecar (share intent) |
 | **v1.0** | Live ELM327 (BLE/USB) adapter into same Postgres + Parquet core |
-| **v2.0** | Open hardware reference dongle + cohort baselines (opt-in); TimescaleDB if needed |
+| **v2.0** | Open hardware reference dongle and cohort baselines (opt-in). TimescaleDB if needed |
 
 ## Distribution Plan
 
@@ -302,7 +302,7 @@ Hero (SCAN / TREND)
 ## Next Steps
 
 1. **Create GitHub repo** — Apache-2.0, Spring Boot + React monorepo, Flyway/Liquibase migrations, `docker-compose.yml`.
-2. **Parser milestone first (P1)** — 3 Car Scanner CSV #2 fixtures; JUnit parameterized tests; block trend engine until green.
+2. **Parser milestone first (P1)** — 3 Car Scanner CSV #2 fixtures. JUnit parameterized tests. Block trend engine until tests pass.
 3. **Import pipeline** — normalize → Parquet → transactional Postgres aggregates → materialized baselines.
 4. **Trend engine** — rule-based segmenter + 4 metrics + baseline gate (≥5 sessions).
 5. **Async import API + React UI** — upload, poll status, trends, baseline progress.
@@ -311,8 +311,8 @@ Hero (SCAN / TREND)
 ## What I noticed about how you think
 
 - You reached for **predictive maintenance** immediately — you want the product to feel like it knows the car, not just lists codes.
-- You held **open source + BYOM** as non-negotiables — that's architecture, not marketing; good sign for a tool builders will trust.
-- You chose **Car Scanner extension** for speed but **protocol hub** for identity — the design reconciles that as one core with multiple adapters, which is the right instinct for OSS longevity.
+- You held **open source and BYOM** as non-negotiable requirements. That choice is architectural, not promotional. It builds trust with users.
+- You chose **Car Scanner extension** for speed, but **protocol hub** for identity. The design unifies these choices into one core with multiple adapters. This approach supports project longevity.
 - **Open hardware** as 10x vision shows you're thinking about the full stack, not blaming users for bad dongles.
 
 ---
@@ -322,16 +322,16 @@ Hero (SCAN / TREND)
 | # | Topic | Decision |
 |---|-------|----------|
 | 1A | Parser gate | Fixtures-first TDD — 3 real CSV #2 samples before trend engine |
-| 2A | Storage shape | Long/narrow samples; Parquet archive + Postgres aggregates (7C) |
+| 2A | Storage shape | Long or narrow samples. Parquet archive and Postgres aggregates (7C) |
 | 3A | Segmentation | Rule-based trip segmenter (speed + time fallback) |
 | 4A | Baselines | Materialized `baselines` table after each successful import |
 | 5B | Ingestion stack | **Pivot:** Java Spring → Parquet staging → PostgreSQL |
 | 6A | UI | Spring REST + React/Vite |
 | 7C | Time-series DB | Postgres aggregates + Parquet raw archive (not Timescale v0) |
-| 8A | BYOM | Structured JSON to Ollama only; schema validation + retry |
+| 8A | BYOM | Structured JSON to Ollama only. Schema validation and retry |
 | CQ1A | Parser location | Java module in monorepo |
 | CQ2A | Structure | Layered packages: api / ingestion / analytics / persistence / llm |
-| CQ3A | Import errors | `@Transactional` Postgres; Parquet cleanup on failure |
+| CQ3A | Import errors | `@Transactional` Postgres. Parquet cleanup on failure |
 | CQ4A | PID names | `pids/canonical-map.json` single source of truth |
 | T1A | Integration tests | Testcontainers PostgreSQL |
 | T2A | Fixtures | 3 real + 1 synthetic golden drift (6 sessions) |
@@ -355,7 +355,7 @@ Hero (SCAN / TREND)
 | Item | Rationale |
 |------|-----------|
 | Python + DuckDB + Streamlit v0 | Superseded by user eng-review pivot to Java/Spring/Postgres |
-| `pid_samples` table in Postgres | Raw rows live in Parquet; Postgres holds aggregates only |
+| `pid_samples` table in Postgres | Raw rows live in Parquet. Postgres holds aggregates only |
 | TimescaleDB / partitioning | Add when aggregate query p95 > 5s (TODO captured) |
 | AndrOBD CSV parser | v0.2 after Car Scanner path proven (TODO captured) |
 | Live BLE/USB ELM327 | v1.0 — dongle compatibility tar pit |
@@ -371,15 +371,15 @@ Hero (SCAN / TREND)
 | Codepath | Failure | Test? | Handling? | User sees |
 |----------|---------|-------|-----------|-----------|
 | Parser | Unknown CSV headers | Fixture tests | Clear 400 + export instructions | Actionable error |
-| Parser | Missing speed PID | Segmenter unit test | Time-only fallback; metric skip if needed | "Segment approximated" note |
-| Import | Aggregate SQL fails mid-job | Testcontainers IT | Transaction rollback; Parquet cleanup | Failed job status |
+| Parser | Missing speed PID | Segmenter unit test | Time-only fallback. Metric skip if needed | "Segment approximated" note |
+| Import | Aggregate SQL fails mid-job | Testcontainers IT | Transaction rollback. Parquet cleanup | Failed job status |
 | Import | Duplicate file upload | GAP | Define idempotency policy | TBD — implement in ImportService |
 | Baselines | <5 sessions | Golden test | Alert gate suppresses | Progress bar "4/6 drives" |
-| Ollama | Down / invalid JSON | WireMock + retry test | Retry once; show metrics without LLM | Degraded report banner |
+| Ollama | Down / invalid JSON | WireMock + retry test | Retry once. Show metrics without LLM | Degraded report banner |
 | Async job | Server restart mid-import | GAP | Job status stale | **Critical gap** — persist job state in Postgres (import_jobs table) |
 | Parquet | Disk full | GAP | IOException on write | **Critical gap** — surface disk error on job |
 
-**Critical gaps to close in implementation:** persisted `import_jobs` (not in-memory only); disk-full handling on Parquet write.
+**Critical gaps to close in implementation:** persisted `import_jobs` (not in-memory only). Disk-full handling on Parquet write.
 
 ## Worktree parallelization
 
@@ -394,12 +394,12 @@ Hero (SCAN / TREND)
 | T7 Ollama client | `backend/.../llm` | T4 |
 | T8 Testcontainers IT | `backend/src/test` | T3, T4 |
 
-**Lane A:** T1 → T3 → T5 (backend pipeline)  
-**Lane B:** T2 (schema) — merge before T3  
-**Lane C:** T4 → T7 (analytics) — after T1  
-**Lane D:** T6 (frontend) — parallel after T5 contract sketched  
+- **Lane A:** T1 → T3 → T5 (backend pipeline)
+- **Lane B:** T2 (schema) — merge before T3
+- **Lane C:** T4 → T7 (analytics) — after T1
+- **Lane D:** T6 (frontend) — parallel after T5 contract sketched
 
-Launch A+B in parallel worktrees after repo scaffold; then C; then D.
+Start Lane A and Lane B in parallel worktrees after repository scaffolding. Next start Lane C. Then start Lane D.
 
 ## Implementation Tasks
 
@@ -408,54 +408,54 @@ Synthesized from this review's findings. Each task derives from a specific findi
 - [x] **T1 (P1, human: ~4h / CC: ~30min)** — parser — Scaffold Java Car Scanner CSV #2 parser with 3 real fixtures
   - Surfaced by: Architecture #1 — fixtures-first TDD
   - Files: `backend/.../CarScannerCsvParser.java`, `backend/src/test/resources/fixtures/`
-  - Verify: `./mvnw test -Dtest=CarScannerCsvParserTest`
+  - Check: `./mvnw test -Dtest=CarScannerCsvParserTest`
 
 - [x] **T2 (P1, human: ~6h / CC: ~45min)** — ingestion — Parquet staging + transactional Postgres import
   - Surfaced by: Architecture #5/7 — Spring + Parquet + Postgres
   - Files: `ImportService.java`, Flyway migrations
-  - Verify: Testcontainers `ImportServiceIT`
+  - Check: Testcontainers `ImportServiceIT`
 
 - [x] **T3 (P1, human: ~3h / CC: ~20min)** — analytics — Rule-based trip segmenter
   - Surfaced by: Architecture #3
   - Files: `TripSegmenter.java`
-  - Verify: unit tests per segment type + no-speed fallback
+  - Check: unit tests per segment type + no-speed fallback
 
 - [x] **T4 (P1, human: ~6h / CC: ~40min)** — analytics — Materialized baselines + 4 metrics + alert gate
   - Surfaced by: Architecture #4
   - Files: `backend/.../analytics/`
-  - Verify: golden 6-session LTFT drift → alert
+  - Check: golden 6-session LTFT drift → alert
 
 - [x] **T5 (P1, human: ~3h / CC: ~25min)** — api — Async import job + polling
   - Surfaced by: Performance #1
   - Files: `ImportController.java`, `import_jobs` table
-  - Verify: upload large fixture without timeout
+  - Check: upload large fixture without timeout
 
 - [x] **T6 (P1, human: ~4h / CC: ~30min)** — frontend — React upload + trends UI
   - Surfaced by: Architecture #6
   - Files: `frontend/src/`
-  - Verify: manual E2E against local docker-compose
+  - Check: manual E2E against local docker-compose
 
 - [x] **T7 (P2, human: ~2h / CC: ~15min)** — llm — Ollama structured JSON client
   - Surfaced by: Architecture #8
   - Files: `OllamaClient.java`, `VehicleReportService.java`, `VehicleReportController.java`, `frontend/src/App.tsx`
-  - Verify: MockRest schema validation + retry tests; UI degraded banner
+  - Check: MockRest schema validation and retry tests. UI degraded banner.
 
 - [x] **T8 (P2, human: ~3h / CC: ~20min)** — test — Testcontainers + golden drift fixture
   - Surfaced by: Test #1/#2
   - Files: `GoldenDriftIntegrationTest.java`, `PostgresIntegrationTest.java`, `.github/workflows/ci.yml`
-  - Verify: CI green on GitHub Actions; `GoldenDriftIntegrationTest` via REST API
+  - Check: CI green on GitHub Actions. `GoldenDriftIntegrationTest` via REST API.
 
 - [x] **T9 (P2, human: ~2h / CC: ~15min)** — ops — docker-compose + README quickstart
   - Surfaced by: Distribution check
   - Files: `docker-compose.yml`, `README.md`, `.env.example`, `.github/workflows/ci.yml`
-  - Verify: new user path <5 minutes; compose healthcheck; frontend CI build/lint
+  - Check: new user path <5 minutes. Compose healthcheck. Frontend CI build/lint.
 
 **Eng-review artifacts:** gstack task JSONL and test-plan markdown from the 2026-06-15 review (local machine only — not checked into this repo).
 
 ## TODOS.md (deferred work)
 
-- **TimescaleDB / partitioning** — when aggregate query p95 > 5s; depends on materialized baselines in prod-like volume.
-- **AndrOBD CSV parser (v0.2)** — after Car Scanner fixtures + golden drift CI green; needs adapter interface on ImportService.
+- **TimescaleDB / partitioning** — when aggregate query p95 > 5s. Depends on materialized baselines in prod-like volume.
+- **AndrOBD CSV parser (v0.2)** — after Car Scanner fixtures and golden drift CI pass. Needs adapter interface on ImportService.
 
 ## Unresolved decisions
 
@@ -467,15 +467,15 @@ Synthesized from this review's findings. Each task derives from a specific findi
 
 **Skill:** /plan-eng-review  
 **Date:** 2026-06-15  
-**Mode:** FULL_REVIEW (scope accepted; stack pivot mid-review)  
+**Mode:** FULL_REVIEW (scope accepted. Stack pivot mid-review)  
 **Branch:** greenfield  
 
 ### Completion summary
 
-- **Step 0:** Scope accepted as-is for predictive hub; complexity gate not triggered; DuckDB bulk ingest note superseded by Postgres pivot
+- **Step 0:** Scope accepted as-is for predictive hub. Complexity gate not triggered. DuckDB bulk ingest note superseded by Postgres pivot
 - **Architecture Review:** 8 issues → 8 decisions (including Java/Spring/Postgres pivot on #5)
 - **Code Quality Review:** 4 issues → 4 decisions
-- **Test Review:** diagram + test plan artifact; 2 decisions; 0/N coverage (greenfield)
+- **Test Review:** diagram and test plan artifact. 2 decisions. 0/N coverage (greenfield)
 - **Performance Review:** 1 issue → async import
 - **NOT in scope:** written
 - **What already exists:** written
@@ -491,7 +491,7 @@ Synthesized from this review's findings. Each task derives from a specific findi
 |--------|--------|
 | Office hours / CEO | APPROVED design |
 | Eng (PLAN) | COMPLETE — issues_open (2 critical gaps, 3 open questions) |
-| Design | Complete v0 pass 2026-06-15 — journey, diagnostic UI, IA, a11y; tokens documented below |
+| Design | Complete v0 pass 2026-06-15 — journey, diagnostic UI, IA, a11y. Tokens documented below |
 | Outside voice | Skipped |
 
 **Ready to implement:** Yes — start T1 parser + fixtures after repo creation.  

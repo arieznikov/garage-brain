@@ -56,7 +56,7 @@ The UI uses a **diagnostic terminal** layout (see [docs/DESIGN.md](docs/DESIGN.m
 3. Upload a **Car Scanner CSV #2** export (Data recording → Share).
 4. Watch import status until **completed** — baseline metrics and progress appear on the vehicle page.
 5. Import **at least five drives** on the same vehicle to unlock trend alerts (cold-start gate).
-6. Open **Insights** for alerts and trend baselines; optionally **Generate report** for a BYOM narrative (structured alerts only — never raw CSV).
+6. Open **Insights** for alerts and trend baselines. Optionally select **Generate report** for a BYOM narrative (structured alerts only — never raw CSV).
 
 Wrong export format? The API returns:
 
@@ -110,17 +110,17 @@ cd backend && ./mvnw verify
 cd ../frontend && npm ci && npm run build && npm run lint
 ```
 
-Integration tests prefer **Testcontainers** when Docker is available; otherwise they use compose Postgres on `localhost:5432` (or `DB_PORT` from `.env`). GitHub Actions runs backend `verify` plus frontend build/lint on every push/PR to `main`.
+Integration tests prefer **Testcontainers** when Docker is available. Otherwise, they use compose Postgres on `localhost:5432` (or `DB_PORT` from `.env`). GitHub Actions runs backend `verify` plus frontend build/lint on every push/PR to `main`.
 
 `verify` enforces **80% line coverage** (JaCoCo). Report: `backend/target/site/jacoco/index.html`.
 
 The **golden drift** scenario (`GoldenDriftIntegrationTest`): five stable cruises + one drift fixture → `ltft_drift` alert via REST after the ≥5-session gate.
 
-Parser fixtures: `backend/src/test/resources/fixtures/` — real Car Scanner layouts with **synthetic GPS**; see [fixtures README](backend/src/test/resources/fixtures/README.md).
+Parser fixtures: `backend/src/test/resources/fixtures/` — real Car Scanner layouts with **synthetic GPS**. See [fixtures README](backend/src/test/resources/fixtures/README.md).
 
 ## Before you push (privacy checklist)
 
-1. Confirm `.env` is ignored: `git check-ignore -v .env`
+1. Check that git ignores `.env`: `git check-ignore -v .env`
 2. Do not stage `.env`, `backend/target/`, `frontend/node_modules/`, or `~/.garage-brain` data
 3. New fixture CSVs: run `python3 scripts/redact-fixture-gps.py`
 4. Scan for accidents: `git grep -E '192\.168\.|10\.\d+\.|sk-[a-zA-Z0-9]{20,}' || true`

@@ -1,12 +1,12 @@
 # Car Scanner export fixtures
 
-Real Car Scanner exports used for parser regression tests. **GPS latitude/longitude are replaced with synthetic coordinates** (`45.0000000`, `-93.0000000`) so public repos do not expose driving routes.
+Real Car Scanner exports used for parser regression tests. **We replaced GPS latitude and longitude with synthetic coordinates** (`45.0000000`, `-93.0000000`) so public repositories do not expose driving routes.
 
 ## Layout
 
 | Directory | Format | Notes |
 |-----------|--------|-------|
-| `exported_records_horizontal/` | Wide CSV, comma-separated | Sparse rows; wall-clock `time` column |
+| `exported_records_horizontal/` | Wide CSV, comma-separated | Sparse rows. Wall-clock `time` column. |
 | `exported_records_horizontal_backfill/` | Wide CSV, comma-separated | Same sessions as horizontal, with prior values backfilled |
 | `exported_records_vertical/` | Long CSV, semicolon-separated | `SECONDS`, `PID`, `VALUE`, `UNITS`, GPS columns |
 
@@ -27,6 +27,6 @@ Synthetic CSV #2 samples (`car-scanner-csv2-*.csv`) remain for the minimal tutor
    python3 scripts/redact-fixture-gps.py
    ```
 
-4. Run `./mvnw verify` in `backend/` to confirm parser and golden-drift tests still pass.
+4. Run `./mvnw verify` in `backend/` to confirm that parser and golden-drift tests still pass.
 
 Strip VINs, license plates, and custom profile names from filenames or headers if they could identify you.
